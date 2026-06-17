@@ -71,7 +71,7 @@ def run_bash(command: str) -> str:
 
 def stream_agent_loop(messages: list, max_turns: int = 20) -> None:
     """流式循环。每轮：开流 → 累加碎片 → 还原一条 assistant 消息 → 执行工具 → 续。"""
-    for _turn in range(max_turns):
+    for _ in range(max_turns):
         stream = client.chat.completions.create(
             model=MODEL,
             messages=messages,
@@ -86,7 +86,9 @@ def stream_agent_loop(messages: list, max_turns: int = 20) -> None:
             delta = chunk.choices[0].delta
             if delta.content:
                 content += delta.content
-                print(f"\033[90m{delta.content}\033[0m", end="", flush=True)  # 边到边打印
+                print(
+                    f"\033[90m{delta.content}\033[0m", end="", flush=True
+                )  # 边到边打印
             if delta.tool_calls:
                 for tc in delta.tool_calls:
                     # ── TODO（流式核心，你来写）────────────────────────────────
@@ -96,7 +98,15 @@ def stream_agent_loop(messages: list, max_turns: int = 20) -> None:
                     #   2. 第一片带 tc.id 与 tc.function.name（后续片为 None）→ 有就存进 slot。
                     #   3. 每片可能带一段 tc.function.arguments 字符串碎片 → 用 += 拼到 slot["args"]。
                     # 关键：arguments 是「字符串逐段拼接」，不是 dict.update，也不是覆盖。
-                    ...
+                    slot = tool_calls.setdefault(
+                        tc.index, {"id": None, "name": None, "args": ""}
+                    )
+                    if tc.id:
+                        slot["id"] = tc.id
+                    if tc.function and tc.function.name:
+                        slot["name"] = tc.function.name
+                    if tc.function and tc.function.arguments:
+                        slot["args"] += tc.function.arguments
                     # ──────────────────────────────────────────────────────────
         print()
 
@@ -133,7 +143,9 @@ def stream_agent_loop(messages: list, max_turns: int = 20) -> None:
                 args = json.loads(slot["args"])
                 out = run_bash(args["command"])
             except (json.JSONDecodeError, KeyError) as e:
-                out = f"Error: bad tool arguments: {e}"  # 错误回灌，让模型自己改
+                out = (
+                    f"Error: bad tool arguments: {e}"  # 错误回灌，让模型自己改
+                )
             print(out[:200])
             messages.append(
                 {"role": "tool", "tool_call_id": slot["id"], "content": out}
