@@ -13,7 +13,8 @@
 |---|---|---|
 | `.env.example` | ✅ | 复制成 `.env` 并填 DeepSeek key |
 | `check_api.py` | ✅ | 连通性自测（单轮对话，无工具） |
-| `code.py` | 🚧 | client / 工具定义 / `run_bash` / CLI 已就绪，**核心 `agent_loop` 留你手写** |
+| `code.py` | ✅ | 非流式版 agent loop（DeepSeek 跑通，2026-06-17） |
+| `code_stream.py` | 🚧 | 流式版骨架，**只留 delta 累加 TODO 给你手写**（开流/打印/消息还原/工具执行/轮数上限/异常兜底已给） |
 
 ## 准备（已完成）
 

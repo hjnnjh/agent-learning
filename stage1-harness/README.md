@@ -13,7 +13,9 @@
 
 逐课进度打卡（s01–s20）：
 
-- [ ] **基础（s01–s04）**：agent loop / 工具分发 / 权限 / 扩展 hooks
+- **基础（s01–s04）**：agent loop / 工具分发 / 权限 / 扩展 hooks
+  - [x] s01 agent loop —— DeepSeek 非流式版跑通（`hands-on/min-agent-loop/code.py`，2026-06-17；流式版 `code_stream.py` 进行中）
+  - [ ] s02 工具分发 · s03 权限 · s04 扩展 hooks
 - [ ] **复杂任务（s05–s08）**：规划 / 委派 / 上下文管理
 - [ ] **记忆与恢复（s09–s11）**：持久记忆 / 运行时 system prompt / 错误处理
 - [ ] **长任务（s12–s14）**：任务图 / 后台执行 / 调度

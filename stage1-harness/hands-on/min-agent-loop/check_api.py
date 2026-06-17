@@ -23,7 +23,12 @@ model = os.getenv("MODEL_ID", "deepseek-chat")
 def main() -> None:
     resp = client.chat.completions.create(
         model=model,
-        messages=[{"role": "user", "content": "ping — reply with the single word: pong"}],
+        messages=[
+            {
+                "role": "user",
+                "content": "ping — reply with the single word: pong",
+            }
+        ],
     )
     print(f"model={model}  reply={resp.choices[0].message.content!r}")
     print(f"usage={resp.usage}")

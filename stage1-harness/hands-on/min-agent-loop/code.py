@@ -15,6 +15,7 @@ import subprocess
 
 try:
     import readline  # noqa: F401
+
     # macOS 的 libedit 在处理中文输入时有退格问题，这四行修复它
     readline.parse_and_bind("set bind-tty-special-chars off")
     readline.parse_and_bind("set input-meta on")
@@ -61,8 +62,12 @@ def run_bash(command: str) -> str:
         return "Error: Dangerous command blocked"
     try:
         r = subprocess.run(
-            command, shell=True, cwd=os.getcwd(),
-            capture_output=True, text=True, timeout=120,
+            command,
+            shell=True,
+            cwd=os.getcwd(),
+            capture_output=True,
+            text=True,
+            timeout=120,
         )
         out = (r.stdout + r.stderr).strip()
         return out[:50000] if out else "(no output)"
@@ -95,7 +100,23 @@ def agent_loop(messages: list) -> None:
       - DeepSeek 一次可能返回多个 tool_calls：每个都要执行、各回一条 tool 消息。
       - 可在执行前 print 一下命令（如黄色 \\033[33m），方便观察循环。
     """
-    raise NotImplementedError("s01 动手锚点：请亲手实现 agent_loop（删掉这行）")
+    while True:
+        resp = client.chat.completions.create(
+            model=MODEL,
+            messages=messages,
+            tools=TOOLS
+        )
+        msg = resp.choices[0].message
+        messages.append(msg)
+        if resp.choices[0].finish_reason != "tool_calls":
+            return
+        else:
+            for call in msg.tool_calls:
+                args = json.loads(call.function.arguments)
+                out = run_bash(args["command"])
+                messages.append(
+                    {"role": "tool", "tool_call_id": call.id, "content": out}
+                )
 
 
 # ── Entry point ──
@@ -115,7 +136,11 @@ if __name__ == "__main__":
         agent_loop(history)
         # Print the model's final text reply
         final = history[-1]
-        text = final.get("content") if isinstance(final, dict) else getattr(final, "content", None)
+        text = (
+            final.get("content")
+            if isinstance(final, dict)
+            else getattr(final, "content", None)
+        )
         if text:
             print(text)
         print()
