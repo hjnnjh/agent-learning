@@ -1,0 +1,20 @@
+[project]
+name = "agent-learning"
+version = "0.1.0"
+description = "学习型项目：Agent Harness 与 RL 后训练路线的资料、笔记与动手锚点"
+readme = "README.md"
+requires-python = ">=3.11"
+# 依赖按阶段动手时再用 `uv add` 增量加入（如 anthropic / trl / verifiers），
+# 避免一次性装上重型框架。详见各 stage*/hands-on/ 的 README。
+dependencies = []
+
+[dependency-groups]
+dev = ["ruff>=0.6"]
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+# 学习项目：保持轻量，主要靠格式化与基本检查。
+select = ["E", "F", "I"]
+ignore = ["E501"]

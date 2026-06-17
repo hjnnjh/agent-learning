@@ -1,0 +1,24 @@
+# Python / uv
+.venv/
+__pycache__/
+*.py[cod]
+.python-version.local
+
+# 训练产物 / 大文件（不入库）
+wandb/
+outputs/
+checkpoints/
+*.ckpt
+*.safetensors
+*.bin
+data/
+datasets/
+models/
+
+# 编辑器 / 系统
+.DS_Store
+.idea/
+.vscode/
+
+# Claude Code 本地配置（不提交）
+.claude/settings.local.json
