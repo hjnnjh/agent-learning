@@ -6,7 +6,10 @@ readme = "README.md"
 requires-python = ">=3.11"
 # 依赖按阶段动手时再用 `uv add` 增量加入（如 anthropic / trl / verifiers），
 # 避免一次性装上重型框架。详见各 stage*/hands-on/ 的 README。
-dependencies = []
+dependencies = [
+    "openai>=2.42.0",
+    "python-dotenv>=1.2.2",
+]
 
 [dependency-groups]
 dev = ["ruff>=0.6"]
