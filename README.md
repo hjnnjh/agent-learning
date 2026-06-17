@@ -1,5 +1,21 @@
 # 🧭 Agent 学习路线：Harness 与 RL 后训练
 
+![stage](https://img.shields.io/badge/stages-Harness%20%E2%86%92%20RL%20%E2%86%92%20Agentic%20RL-1f6feb)
+![type](https://img.shields.io/badge/type-learning%20project-success)
+![python](https://img.shields.io/badge/python-%E2%89%A53.11-3776ab?logo=python&logoColor=white)
+![uv](https://img.shields.io/badge/deps-uv-de5fe9)
+![Claude Code](https://img.shields.io/badge/config-Claude%20Code-d97757)
+![license](https://img.shields.io/badge/license-personal%20study-lightgrey)
+
+> 一个**学习型项目**：把《Agent 学习路线：Harness 与 RL 后训练》落成可打卡的资料、笔记与动手锚点——
+> 从徒手写最小 agent loop，到在小模型上跑通 GRPO，再到多轮工具调用的 Agentic RL。
+
+**🔗 快速链接**　·　[阶段一 · Harness](stage1-harness/README.md)　·　[阶段二 · RL 后训练](stage2-rl-posttraining/README.md)　·　[阶段三 · Agentic RL](stage3-agentic-rl/README.md)　·　[Anthropic 博客精读](anthropic-blog/reading-list.md)　·　[项目指引 CLAUDE.md](CLAUDE.md)　·　[配置说明 .claude](.claude/CLAUDE.md)
+
+**参考**　·　主线课程 [learn-claude-code](https://github.com/shareAI-lab/learn-claude-code)　·　配置范式 [RQ-TPP](https://github.com/hjnnjh/RQ-TPP)（规则自动加载 / 技能按需触发 / 子智能体 / hooks 护栏）
+
+---
+
 学习型项目。承载 Notion 路线《Agent 学习路线：Harness 与 RL 后训练》的资料、笔记与动手锚点。
 配置范式参考 [RQ-TPP](https://github.com/hjnnjh/RQ-TPP)（规则自动加载 / 技能按需触发 / 子智能体 / hooks 护栏）。
 
