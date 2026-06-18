@@ -15,7 +15,8 @@
 
 - **基础（s01–s04）**：agent loop / 工具分发 / 权限 / 扩展 hooks
   - [x] s01 agent loop —— DeepSeek 非流式版 `code.py` + 流式版 `code_stream.py` 均跑通（2026-06-17）
-  - [ ] s02 工具分发 · s03 权限 · s04 扩展 hooks
+  - [x] s02 工具分发 —— DeepSeek 版跑通（`hands-on/s02-tool-dispatch/`，TOOL_HANDLERS 查表分发，工具层 pytest 8 passed，2026-06-18）
+  - [ ] s03 权限 · s04 扩展 hooks
 - [ ] **复杂任务（s05–s08）**：规划 / 委派 / 上下文管理
 - [ ] **记忆与恢复（s09–s11）**：持久记忆 / 运行时 system prompt / 错误处理
 - [ ] **长任务（s12–s14）**：任务图 / 后台执行 / 调度
