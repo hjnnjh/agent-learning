@@ -12,7 +12,10 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["ruff>=0.6"]
+dev = [
+    "pytest>=9.1.0",
+    "ruff>=0.6",
+]
 
 [tool.ruff]
 line-length = 88
