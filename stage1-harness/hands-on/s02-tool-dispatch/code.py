@@ -91,7 +91,10 @@ def run_read(path: str, limit: int | None = None) -> str:
 
     提示：safe_path(path).read_text().splitlines() → 取前 limit 行 → "\\n".join(...)
     """
-    raise NotImplementedError("TODO run_read")
+    lines = safe_path(path).read_text().splitlines()
+    if limit:
+        lines = lines[:limit]
+    return "\n".join(lines)
 
 
 def run_write(path: str, content: str) -> str:
@@ -99,7 +102,8 @@ def run_write(path: str, content: str) -> str:
 
     提示：fp = safe_path(path); fp.parent.mkdir(parents=True, exist_ok=True); fp.write_text(content)
     """
-    raise NotImplementedError("TODO run_write")
+    safe_path(path).write_text(content)
+    return f"Wrote {len(content)} bytes to {path}."
 
 
 def run_edit(path: str, old_text: str, new_text: str) -> str:
@@ -107,7 +111,11 @@ def run_edit(path: str, old_text: str, new_text: str) -> str:
 
     提示：读出 text；if old_text not in text → return error；text.replace(old_text, new_text, 1) 写回
     """
-    raise NotImplementedError("TODO run_edit")
+    text = safe_path(path).read_text()
+    if old_text not in text:
+        return "Error: text not found"
+    safe_path(path).write_text(text.replace(old_text, new_text, 1))
+    return f"Edited {path}"
 
 
 def run_glob(pattern: str) -> str:
@@ -115,7 +123,9 @@ def run_glob(pattern: str) -> str:
 
     提示：import glob; glob.glob(pattern, root_dir=WORKDIR)；无匹配返回 "(no matches)"
     """
-    raise NotImplementedError("TODO run_glob")
+    import glob as g
+
+    return "\n".join(g.glob(pattern, root_dir=WORKDIR))
 
 
 # ── 工具定义（给好）：5 个工具的 OpenAI function-calling schema ──
@@ -125,23 +135,50 @@ def _fn(name: str, description: str, props: dict, required: list[str]) -> dict:
         "function": {
             "name": name,
             "description": description,
-            "parameters": {"type": "object", "properties": props, "required": required},
+            "parameters": {
+                "type": "object",
+                "properties": props,
+                "required": required,
+            },
         },
     }
 
 
 TOOLS = [
-    _fn("bash", "Run a shell command.",
-        {"command": {"type": "string"}}, ["command"]),
-    _fn("read_file", "Read file contents.",
-        {"path": {"type": "string"}, "limit": {"type": "integer"}}, ["path"]),
-    _fn("write_file", "Write content to a file.",
-        {"path": {"type": "string"}, "content": {"type": "string"}}, ["path", "content"]),
-    _fn("edit_file", "Replace exact text in a file once.",
-        {"path": {"type": "string"}, "old_text": {"type": "string"}, "new_text": {"type": "string"}},
-        ["path", "old_text", "new_text"]),
-    _fn("glob", "Find files matching a glob pattern.",
-        {"pattern": {"type": "string"}}, ["pattern"]),
+    _fn(
+        "bash",
+        "Run a shell command.",
+        {"command": {"type": "string"}},
+        ["command"],
+    ),
+    _fn(
+        "read_file",
+        "Read file contents.",
+        {"path": {"type": "string"}, "limit": {"type": "integer"}},
+        ["path"],
+    ),
+    _fn(
+        "write_file",
+        "Write content to a file.",
+        {"path": {"type": "string"}, "content": {"type": "string"}},
+        ["path", "content"],
+    ),
+    _fn(
+        "edit_file",
+        "Replace exact text in a file once.",
+        {
+            "path": {"type": "string"},
+            "old_text": {"type": "string"},
+            "new_text": {"type": "string"},
+        },
+        ["path", "old_text", "new_text"],
+    ),
+    _fn(
+        "glob",
+        "Find files matching a glob pattern.",
+        {"pattern": {"type": "string"}},
+        ["pattern"],
+    ),
 ]
 
 
@@ -150,6 +187,11 @@ TOOLS = [
 TOOL_HANDLERS = {
     # "bash": run_bash,
     # ... 你来补全
+    "bash": run_bash,
+    "read_file": run_read,
+    "write_file": run_write,
+    "edit_file": run_edit,
+    "glob": run_glob,
 }
 
 
@@ -164,13 +206,24 @@ def agent_loop(messages: list) -> None:
         if resp.choices[0].finish_reason != "tool_calls":
             return
         for call in msg.tool_calls:
-            args = json.loads(call.function.arguments)  # noqa: F841  # TODO 3 里 handler(**args) 会用到
+            args = json.loads(
+                call.function.arguments
+            )  # noqa: F841  # TODO 3 里 handler(**args) 会用到
             # ── TODO 3：查表分发（s02 的核心，只有这几行是新的）──
             #   1. handler = TOOL_HANDLERS.get(call.function.name)
             #   2. out = handler(**args) if handler else f"Unknown tool: {call.function.name}"
             #   3. 回灌一条 {"role": "tool", "tool_call_id": call.id, "content": out}
             #   （可在执行前 print(f"\033[33m> {call.function.name}\033[0m") 观察调了哪个工具）
-            raise NotImplementedError("TODO 3: 查表分发并回灌 tool 结果")
+            handler = TOOL_HANDLERS.get(call.function.name)
+            out = (
+                handler(**args)
+                if handler
+                else f"Unknown tool: {call.function.name}"
+            )
+            print(f"\033[33m> {call.function.name}\033[0m")
+            messages.append(
+                {"role": "tool", "tool_call_id": call.id, "content": out}
+            )
 
 
 if __name__ == "__main__":
